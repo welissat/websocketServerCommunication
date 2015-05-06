@@ -1,0 +1,10 @@
+{
+  "cwd": "D:\work\git\websocketServerCommunication",
+  "instances": 1,
+  "name": "websocketServerCommunication",
+  "script": "./app/app.coffee",
+  "node_args": "",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
