@@ -1,0 +1,11 @@
+{
+  "name": "testTask",
+  "version": "1.0.0",
+  "description": "websocket server communication",
+  "main": "app/app.coffee",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "author": "andr.wel",
+  "license": "EULA"
+}
