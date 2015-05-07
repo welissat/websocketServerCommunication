@@ -9,9 +9,11 @@
   "author": "andr.wel",
   "license": "EULA",
   "dependencies": {
+    "change-case": "^2.3.0",
     "express": "^4.12.3",
     "helmet": "^0.9.0",
     "js-yaml": "^3.3.0",
-    "nconf": "^0.7.1"
+    "nconf": "^0.7.1",
+    "winston": "^1.0.0"
   }
 }

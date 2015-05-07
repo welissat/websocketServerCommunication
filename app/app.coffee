@@ -6,11 +6,15 @@ global.req = (name) ->
 
 express = require 'express'
 helmet = require 'helmet'
+
 conf = req 'app/helpers/config.coffee'
+log = req 'app/helpers/logger'
 
 app = express()
 app.use(helmet)
 
 port = conf.get('app:port');
-console.log 'port', port
-app.listen(port)
+app.listen port, (err) ->
+  if err?
+    log.error "cant listen #{port}"
+

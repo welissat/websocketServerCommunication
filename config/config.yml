@@ -1,2 +1,18 @@
 app:
+  appName: "websocketServerCommunication"
   port: 8080
+logs:
+  file:
+    logsDir: "./logs"
+    maxSize: 10000000
+    handleExceptions: true
+    logstash: false
+    timestamp: true
+    showLevel: "info"
+    json: true
+    maxFiles: 10
+  console:
+    handleExceptions: true
+    timestamp: true
+    colorize: true
+    showLevel: "info"
