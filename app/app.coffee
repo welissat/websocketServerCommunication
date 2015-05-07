@@ -17,4 +17,6 @@ port = conf.get('app:port');
 app.listen port, (err) ->
   if err?
     log.error "cant listen #{port}"
+  else
+    log.info "app listening #{port}"
 

@@ -19,7 +19,7 @@ fileLogSettings = {
   showLevel: conf.get('logs:file:showLevel')
 
 }
-console.log(fileLogSettings)
+
 consoleLogSettings = {
   handleExceptions: conf.get('logs:console:handleExceptions'),
   timestamp: conf.get('logs:console:timestamp'),
