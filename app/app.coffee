@@ -8,7 +8,8 @@ express = require 'express'
 helmet = require 'helmet'
 
 conf = req 'app/helpers/config.coffee'
-log = req 'app/helpers/logger'
+log = req 'app/helpers/logger.coffee'
+redisClient = req 'app/helpers/redis.coffee'
 
 app = express()
 app.use(helmet)
