@@ -17,5 +17,5 @@ logs:
     colorize: true
     showLevel: "info"
 redis:
-  serverHost: "127.0.0.1"
+  serverHost: "1uakkf2d9303a.andrwel.koding.io"
   serverPort: 6379
