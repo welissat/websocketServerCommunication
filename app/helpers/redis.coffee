@@ -9,6 +9,5 @@ redisServerHost = conf.get('redis:serverHost')
 redisServerPort = conf.get('redis:serverPort')
 log.info "prepare for connection to redis://#{redisServerHost}:#{redisServerPort}"
 redisClient = redis.createClient(redisServerPort, redisServerHost);
-log.info "redis status: #{redisClient.connected}"
 
 module.exports = redisClient

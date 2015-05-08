@@ -19,3 +19,5 @@ logs:
 redis:
   serverHost: "1uakkf2d9303a.andrwel.koding.io"
   serverPort: 6379
+taskManager:
+  repeatDelay: 100
