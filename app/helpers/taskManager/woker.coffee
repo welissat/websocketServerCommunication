@@ -20,6 +20,9 @@ class Worker
   on: (emitName, fn) ->
     @workerEmitter.on emitName, fm
 
+  once: (emitName, fn) ->
+    @workerEmitter.once emitName, fm
+
   getWorkerId: () ->
     return @workerId
 
@@ -34,6 +37,8 @@ class Worker
       log.info "worker complete task #{task}"
       @status = @statusList.ready
       @workerEmitter.emit @status
+      @workerEmitter.emit 'task.completed', null, task
+
       cb null
 
   isReady: () ->
