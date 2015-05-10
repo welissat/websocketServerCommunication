@@ -3,6 +3,7 @@
 conf = req 'app/helpers/config.coffee'
 log = req 'app/helpers/logger.coffee'
 {EventEmitter} = require 'events'
+
 delay = (ms, func) -> setTimeout func, ms
 
 class TaskManager
@@ -19,12 +20,12 @@ class TaskManager
       else
         _this.tasks.getNewTask (err, task) ->
           if err?
-            delay (conf.get('taskManager:repeatDelay')) ->
+            delay (conf.get('taskManager:repeatDelay')), () ->
               tasksLoopRoutine()
           else
             workers.getWorkerById task.getWorkerId(), (err, worker) ->
               if err?
-                delay (conf.get('taskManager:repeatDelay')) ->
+                delay (conf.get('taskManager:repeatDelay')), () ->
                   tasksLoopRoutine()
               else
                 _this.taskLoop worker, task, () ->
@@ -57,10 +58,11 @@ class TaskManager
       else
         worker.startNewTask task, (err) ->
           if err?
-            delay (conf.get('taskManager:repeatDelay')) ->
+            delay (conf.get('taskManager:repeatDelay')), () ->
               workerLoopRoutine()
 
     worker.once 'task.completed', (err, taskComleted) ->
       cb(err, taskComleted)
     workerLoopRoutine()
 
+module.exports = TaskManager

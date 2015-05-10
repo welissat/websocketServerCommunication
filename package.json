@@ -4,7 +4,7 @@
   "description": "websocket server communication",
   "main": "app/app.coffee",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha --compilers coffee:coffee-script/register tests"
   },
   "author": "andr.wel",
   "license": "EULA",
@@ -15,6 +15,11 @@
     "js-yaml": "^3.3.0",
     "nconf": "^0.7.1",
     "redis": "^0.12.1",
+    "underscore": "^1.8.3",
     "winston": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "rewire": "^2.3.3"
   }
 }

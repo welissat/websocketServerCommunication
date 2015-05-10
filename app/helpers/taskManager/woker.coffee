@@ -18,10 +18,10 @@ class Worker
     @status = @statusList.ready
 
   on: (emitName, fn) ->
-    @workerEmitter.on emitName, fm
+    @workerEmitter.on emitName, fn
 
   once: (emitName, fn) ->
-    @workerEmitter.once emitName, fm
+    @workerEmitter.once emitName, fn
 
   getWorkerId: () ->
     return @workerId
