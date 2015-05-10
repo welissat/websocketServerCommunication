@@ -11,10 +11,15 @@ class TaskManager
     @tasks = tasks
     @workers = workers
 
+  safeInit: (cb) ->
+    @tasks.safeInit () ->
+      @workers.safeInit () ->
+        Log.info "ready for workers"
+
   tasksLoop: (worker) ->
     _this = @
     tasksLoopRoutine = () ->
-      if not tasks.readyNewTask
+      if not tasks.readyNewTask()
         _this.tasks.on 'new_task', () ->
           tasksLoopRoutine()
       else

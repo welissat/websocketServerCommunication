@@ -31,10 +31,20 @@ class Worker
       error = new Error("Cant start task. Worker #{@getWorkerId()} is not ready.")
       cb err
       return
+    if task.getStatus() isnt 'locked'
+      errLine = "worker #{getWorkerId()} cant start task #{task.getTaskId()} because task not locked"
+      Log.warn errLine
+      error = new Error(errLine)
+      cb err
+      return
 
     @status = 'busy'
+    task.setStatus('busy') #тут может быть сгенерирована ошибка, если статус не удалось поставить
+
     delay 10000, () =>
-      log.info "worker complete task #{task}"
+      task.setStatus 'completed'
+
+      log.info "worker complete task #{task.getPayload()}"
       @status = @statusList.ready
       @workerEmitter.emit @status
       @workerEmitter.emit 'task.completed', null, task
@@ -46,3 +56,5 @@ class Worker
       return true
     else
       return false
+
+module.exports = Worker
