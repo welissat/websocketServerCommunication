@@ -54,7 +54,7 @@ class Worker
       cb null
 
   isReady: () ->
-    if @status is statusCodes.ready
+    if @status is @statusList.ready
       return true
     else
       return false
