@@ -11,3 +11,4 @@ global.req = (name) ->
 
 global.rewire = (name) ->
   return rewire(getPath(name))
+

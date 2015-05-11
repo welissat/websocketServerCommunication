@@ -35,6 +35,8 @@ class Task
     if @status is @statusList.completed
       @taskEmitter.emit 'completed', null, @
 
+  getStatus: () ->
+    return @status
   isReady: () ->
     if @status is @statusList.ready
       return true
