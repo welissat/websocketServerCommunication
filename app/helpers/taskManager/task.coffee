@@ -14,7 +14,7 @@ class Task
       completed: 'completed'
     }
 
-    @status = @@statusList.ready
+    @status = @statusList.ready
     @taskEmitter = new EventEmitter()
 
   on: (emitName, fn) ->
