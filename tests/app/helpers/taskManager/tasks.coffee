@@ -19,10 +19,52 @@ describe 'new tasks', () ->
 describe 'tasks list', () ->
   it 'should be support addNewTask', (done) ->
     tasks = new Tasks()
-    for i in [1..1000]
+    for i in [1..100]
       routine = faker.name.findName()
       task = new Task(routine)
       tasks.addNewTask task
 
-    expect(tasks.taskList.length).to.be.equal(1000)
+    expect(tasks.taskList.length).to.be.equal(100)
     done()
+
+  it 'should be get new task', (done) ->
+    tasks = new Tasks()
+    taskUUIDList = []
+    for i in [1..100]
+      routine = faker.name.findName()
+      task = new Task(routine)
+      taskUUIDList.push task.getTaskId().value
+      tasks.addNewTask task
+
+    tasks.getNewTask (err, task) ->
+      expect(err).to.be.null
+      expect(task.getTaskId().value).to.be.equal(taskUUIDList[0])
+      expect(task.getStatus()).to.be.eql('locked')
+      done()
+
+  it 'should be moved completed task to completed queue', (done) ->
+    tasks = new Tasks()
+    taskUUIDList = []
+    maxTasks = 10
+    for i in [1..maxTasks]
+      routine = faker.name.findName()
+      task = new Task(routine)
+      taskUUIDList.push task.getTaskId().value
+      tasks.addNewTask task
+
+    taskUUIDListShift = 0
+    checkNext = () ->
+      tasks.getNewTask (err, task) ->
+        if not task?
+          done()
+        else
+          expect(err).to.be.null
+          expect(task.getTaskId().value).to.be.equal(taskUUIDList[taskUUIDListShift])
+          expect(task.getStatus()).to.be.eql('locked')
+          task.once 'completed', () ->
+            taskUUIDListShift++
+            checkNext()
+
+          task.setStatus "completed"
+
+    checkNext()

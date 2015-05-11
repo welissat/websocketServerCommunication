@@ -20,7 +20,8 @@ class Tasks
 
   getNewTask: (cb) ->
     currentTask = _.first(@taskList)
-    currentTask.setStatus "locked" #задача занята, но ещё не отправлена воркеру
+    if currentTask?
+      currentTask.setStatus "locked" #задача занята, но ещё не отправлена воркеру
     cb null, currentTask
 
 
@@ -34,20 +35,26 @@ class Tasks
 
     @taskList.push task
 
-    task.once 'completed', () ->
-      moveTaskToCompletedQueue(task)
+    task.once 'completed', () =>
+      @moveTaskToCompletedQueue(task)
+
   moveTaskToCompletedQueue: (task) ->
-    saveToCompletedTaskIfNeed = (task) ->
+    Log.info "moveTaskToCompletedQueue #{task.getTaskId().value}"
+    saveToCompletedTaskIfNeed = (task) =>
       for completedTask in @completedTasks
         if task.getTaskId() is completedTask.getTaskId()
+          Log.warn "task #{task.getTaskId().value} is exists in completedTask List"
           return
+
       @completedTasks.push task
+      Log.info "task #{task.getTaskId().value} was added to completedTask List"
       return
 
-    deleteFromTaskListIfNeed = (task) ->
-      for waitingTask in @taskList
-        if task.getTaskId() is waitingTask.getTaskId
-          waitingTask = null
+    deleteFromTaskListIfNeed = (task) =>
+      for index, waitingTask of @taskList
+        if task.getTaskId() is waitingTask.getTaskId()
+          @taskList[index] = null
+          Log.info "task #{task.getTaskId().value} was deleted by taskList"
 
       @taskList = _.compact(@taskList)
       return
@@ -65,6 +72,5 @@ class Tasks
         @moveTaskToCompletedQueue(task)
 
     cb null
-
 
 module.exports = Tasks
