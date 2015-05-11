@@ -62,8 +62,9 @@ describe 'tasks list', () ->
           expect(task.getTaskId().value).to.be.equal(taskUUIDList[taskUUIDListShift])
           expect(task.getStatus()).to.be.eql('locked')
           task.once 'completed', () ->
-            taskUUIDListShift++
-            checkNext()
+            setImmediate () ->
+              taskUUIDListShift++
+              checkNext()
 
           task.setStatus "completed"
 
