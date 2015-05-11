@@ -22,3 +22,40 @@ describe 'new worker', () ->
 
     expect(worker.isReady()).to.be.eql(true)
     done()
+
+describe 'worker', () ->
+  it 'should not be complete a unlocked task', (done) ->
+    routine = faker.name.findName()
+    task = new Task(routine)
+
+    worker = new Worker()
+    worker.once 'task.completed', () ->
+      throw (new Error('unlocked task was completed'))
+    worker.startNewTask task, (err) ->
+      #because task not locked
+      expect(err.message).include('because task not locked')
+      done()
+
+  it 'should complete a locked task', (done) ->
+
+    completedGoal = (taskComplete, workerComplete) ->
+      if taskComplete?
+        completedGoal.taskComplete = true
+      if workerComplete?
+        completedGoal.workerComplete = true
+      #console.log completedGoal
+      if completedGoal.workerComplete and completedGoal.taskComplete
+        done()
+
+
+    routine = faker.name.findName()
+    task = new Task(routine)
+    task.setStatus 'locked'
+    task.once 'completed', () ->
+      completedGoal 'complete'
+
+    worker = new Worker()
+    worker.once 'task.completed', () ->
+      completedGoal null, 'complete'
+    worker.startNewTask task, (err) ->
+      expect(err).to.be.eql(null)

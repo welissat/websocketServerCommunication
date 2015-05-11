@@ -34,10 +34,10 @@ class Worker
       return
 
     if task.getStatus() isnt 'locked'
-      errLine = "worker #{getWorkerId()} cant start task #{task.getTaskId()} because task not locked"
+      errLine = "worker #{@getWorkerId()} cant start task #{task.getTaskId()} because task not locked"
       Log.warn errLine
       error = new Error(errLine)
-      cb err
+      cb error
       return
 
     @status = 'busy'
