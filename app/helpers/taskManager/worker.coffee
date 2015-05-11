@@ -3,17 +3,18 @@
 conf = req 'app/helpers/config.coffee'
 log = req 'app/helpers/logger.coffee'
 {EventEmitter} = require 'events'
+Uuid = require 'uuid-lib'
 
 delay = (ms, func) -> setTimeout func, ms
 
 class Worker
-  constructor: (workerId) ->
+  constructor: () ->
     @statusList = {
       ready: 'ready'
       busy: 'busy'
     }
 
-    @workerId = workerId
+    @workerId = Uuid.create()
     @workerEmitter = new EventEmitter()
     @status = @statusList.ready
 
@@ -31,6 +32,7 @@ class Worker
       error = new Error("Cant start task. Worker #{@getWorkerId()} is not ready.")
       cb err
       return
+
     if task.getStatus() isnt 'locked'
       errLine = "worker #{getWorkerId()} cant start task #{task.getTaskId()} because task not locked"
       Log.warn errLine

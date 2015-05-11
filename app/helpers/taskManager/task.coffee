@@ -13,6 +13,7 @@ class Task
     @statusList = {
       ready: 'ready'
       locked: 'locked'
+      busy: 'busy'
       completed: 'completed'
     }
 
