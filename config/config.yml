@@ -8,14 +8,14 @@ logs:
     handleExceptions: true
     logstash: false
     timestamp: true
-    showLevel: "info"
+    showLevel: "debug"
     json: true
     maxFiles: 10
   console:
     handleExceptions: true
     timestamp: true
     colorize: true
-    showLevel: "info"
+    showLevel: "debug"
 redis:
   serverHost: "1uakkf2d9303a.andrwel.koding.io"
   serverPort: 6379

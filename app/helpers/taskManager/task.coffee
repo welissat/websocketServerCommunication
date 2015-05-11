@@ -43,11 +43,23 @@ class Task
 
   getStatus: () ->
     return @status
+
   isReady: () ->
     if @status is @statusList.ready
       return true
     else
       return false
+
+  isLocked: () ->
+    if @status is @statusList.locked
+      return true
+    else
+      return false
+
+  setCompleted: (cb) ->
+    @setStatus('completed')
+    cb null
+
 
   getPayload: () ->
     return @payload

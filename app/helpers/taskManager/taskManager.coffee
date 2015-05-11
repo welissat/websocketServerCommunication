@@ -7,34 +7,31 @@ log = req 'app/helpers/logger.coffee'
 delay = (ms, func) -> setTimeout func, ms
 
 class TaskManager
-  constructor: (tasks, workers) ->
-    @tasks = tasks
-    @workers = workers
+  constructor: (workerTasks, worker) ->
+    @tasks = workerTasks
+    @worker = worker
 
   safeInit: (cb) ->
-    @tasks.safeInit () ->
-      @workers.safeInit () ->
-        Log.info "ready for workers"
 
-  tasksLoop: (worker) ->
+
+  tasksLoop: () ->
     _this = @
     tasksLoopRoutine = () ->
-      if not tasks.readyNewTask()
-        _this.tasks.on 'new_task', () ->
+      if not _this.tasks.readyNewTask()
+        log.debug "ready new task"
+        _this.tasks.once 'new.task', () ->
           tasksLoopRoutine()
       else
+        log.info "trying get new task"
         _this.tasks.getNewTask (err, task) ->
+          log.info "new task: #{task.getTaskId()}"
           if err?
             delay (conf.get('taskManager:repeatDelay')), () ->
               tasksLoopRoutine()
           else
-            workers.getWorkerById task.getWorkerId(), (err, worker) ->
-              if err?
-                delay (conf.get('taskManager:repeatDelay')), () ->
-                  tasksLoopRoutine()
-              else
-                _this.taskLoop worker, task, () ->
-                  tasksLoopRoutine()
+            _this.taskLoop _this.worker, task, () ->
+               setImmediate () ->
+                 tasksLoopRoutine()
 
     tasksLoopRoutine()
 
@@ -42,12 +39,13 @@ class TaskManager
     _this = @
 
     taskLoopRoutine = () ->
-      if not task.isReady()
+      if not task.isLocked()
+        log.debug "task is not locked"
         task.once 'ready', () ->
           taskLoopRoutine()
       else
         _this.workerLoop worker, task, (err, completedTask) ->
-          task.setCompleted (completedTask) ->
+          task.setCompleted () ->
             cb null
 
     taskLoopRoutine()
@@ -68,6 +66,7 @@ class TaskManager
 
     worker.once 'task.completed', (err, taskComleted) ->
       cb(err, taskComleted)
+      return
     workerLoopRoutine()
 
 module.exports = TaskManager

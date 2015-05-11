@@ -3,20 +3,31 @@
 _ = require 'underscore'
 conf = req 'app/helpers/config.coffee'
 log = req 'app/helpers/logger.coffee'
-
+{EventEmitter} = require 'events'
 
 class Tasks
   constructor: () ->
     @taskList = []
     @completedTasks = []
+    @tasksEmitter = new EventEmitter()
 
   readyNewTask: () ->
     currentTask = _.first(@taskList)
+    if not currentTask?
+      @tasksEmitter.emit 'empty.tasklist'
+      return false
+
     taskStatus = currentTask.getStatus()
     if taskStatus is 'ready'
       return true
     else
       return false
+
+  on: (emitName, fn) ->
+    @tasksEmitter.on emitName, fn
+
+  once: (emitName, fn) ->
+    @tasksEmitter.once emitName, fn
 
   getNewTask: (cb) ->
     currentTask = _.first(@taskList)
