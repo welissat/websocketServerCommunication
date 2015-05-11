@@ -2,7 +2,7 @@
 _ = require 'underscore'
 
 Task = req('app/helpers/taskManager/task.coffee')
-#TaskManager = req('app/helpers/taskManager/taskManager.coffee')
+
 Worker = req('app/helpers/taskManager/worker.coffee')
 faker = require 'faker'
 
@@ -46,7 +46,6 @@ describe 'worker', () ->
       #console.log completedGoal
       if completedGoal.workerComplete and completedGoal.taskComplete
         done()
-
 
     routine = faker.name.findName()
     task = new Task(routine)

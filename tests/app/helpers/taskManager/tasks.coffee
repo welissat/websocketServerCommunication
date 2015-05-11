@@ -5,7 +5,7 @@ _ = require 'underscore'
 faker = require 'faker'
 Task = req('app/helpers/taskManager/task.coffee')
 Tasks = req('app/helpers/taskManager/tasks.coffee')
-TaskManager = req('app/helpers/taskManager/taskManager.coffee')
+
 global.Log = req 'app/helpers/logger.coffee'
 
 expect = require('chai').expect
