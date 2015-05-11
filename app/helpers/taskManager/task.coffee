@@ -3,10 +3,12 @@
 conf = req 'app/helpers/config.coffee'
 log = req 'app/helpers/logger.coffee'
 {EventEmitter} = require 'events'
+Uuid = require 'uuid-lib'
 
 class Task
   constructor: (payload) ->
     @payload = payload
+    @uuid = Uuid.create()
 
     @statusList = {
       ready: 'ready'
@@ -22,6 +24,9 @@ class Task
 
   once: (emitName, fn) ->
     @taskEmitter.once emitName, fn
+
+  getTaskId: () ->
+    return @uuid
 
   setStatus: (status) ->
     if not @statusList[status]?

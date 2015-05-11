@@ -41,7 +41,7 @@ class Worker
     @status = 'busy'
     task.setStatus('busy') #тут может быть сгенерирована ошибка, если статус не удалось поставить
 
-    delay 10000, () =>
+    delay 1000, () =>
       task.setStatus 'completed'
 
       log.info "worker complete task #{task.getPayload()}"

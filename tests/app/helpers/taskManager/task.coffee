@@ -24,3 +24,16 @@ describe 'task', () ->
     expect(task.isReady()).to.be.equal(false)
     expect(task.getStatus()).to.be.equal('locked')
     done()
+  it 'should be get payload', (done) ->
+    payload = "test task payload"
+    task = new Task(payload)
+    expect(task.getPayload()).to.be.equal(payload)
+    done()
+
+  it 'should be emit "complete" after task was complete', (done) ->
+    payload = "task test emit"
+    task = new Task(payload)
+    task.setStatus('locked')
+    task.once 'completed', () ->
+      done()
+    task.setStatus "completed"
