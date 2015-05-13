@@ -19,9 +19,9 @@ describe 'new worker', () ->
 
   it 'should be ready', (done) ->
     worker = new Worker()
-
-    expect(worker.isReady()).to.be.eql(true)
-    done()
+    worker.isReady (err, workerReady) ->
+      expect(workerReady).to.be.eql(true)
+      done()
 
 describe 'worker', () ->
   it 'should not be complete a unlocked task', (done) ->

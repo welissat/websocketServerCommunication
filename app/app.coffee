@@ -9,7 +9,8 @@ helmet = require 'helmet'
 
 conf = req 'app/helpers/config.coffee'
 log = req 'app/helpers/logger.coffee'
-redisClient = req 'app/helpers/redis.coffee'
+#redisClient = req 'app/helpers/redis.coffee'
+#ws = require "nodejs-websocket"
 
 app = express()
 app.use(helmet)

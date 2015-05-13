@@ -13,8 +13,14 @@ class Worker
       ready: 'ready'
       busy: 'busy'
     }
+    @setWorkerId()
+    @setupWorkerStatus()
 
+
+  setWorkerId: () ->
     @workerId = Uuid.create()
+
+  setupWorkerStatus: () ->
     @workerEmitter = new EventEmitter()
     @status = @statusList.ready
 
@@ -28,19 +34,25 @@ class Worker
     return @workerId
 
   startNewTask: (task, cb) ->
-    if not @isReady()
-      error = new Error("Cant start task. Worker #{@getWorkerId()} is not ready.")
-      cb err
-      return
+    @isReady (err, isReady) =>
+      if not isReady
+        error = new Error("Cant start task. WebsocketWorker #{@getWorkerId()} is not ready.")
+        cb err
+        return
 
-    if task.getStatus() isnt 'locked'
-      errLine = "worker #{@getWorkerId()} cant start task #{task.getTaskId()} because task not locked"
-      Log.warn errLine
-      error = new Error(errLine)
-      cb error
-      return
+      if task.getStatus() isnt 'locked'
+        errLine = "worker #{@getWorkerId()} cant start task #{task.getTaskId()} because task not locked"
+        Log.warn errLine
+        error = new Error(errLine)
+        cb error
+        return
 
-    @status = 'busy'
+      #@status = 'busy'
+      @setWorkerStatus 'busy', () =>
+        @workRootine task, () =>
+          cb null
+
+  workRootine: (task, cb) ->
     task.setStatus('busy') #тут может быть сгенерирована ошибка, если статус не удалось поставить
 
     delay 1000, () =>
@@ -50,13 +62,16 @@ class Worker
       @status = @statusList.ready
       @workerEmitter.emit @status
       @workerEmitter.emit 'task.completed', null, task
-
       cb null
-
-  isReady: () ->
+  setWorkerStatus: (status, cb) ->
+    @status = status
+    cb null
+  isReady: (cb) ->
     if @status is @statusList.ready
-      return true
+      #return true
+      cb null, true
     else
-      return false
+      #return false
+      cb null, false
 
 module.exports = Worker

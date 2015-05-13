@@ -54,15 +54,15 @@ class TaskManager
   workerLoop: (worker, task, cb) ->
     _this = @
     workerLoopRoutine = () ->
-      if not worker.isReady()
-        worker.once 'ready', () ->
-          workerLoopRoutine()
-
-      else
-        worker.startNewTask task, (err) ->
-          if err?
-            delay (conf.get('taskManager:repeatDelay')), () ->
-              workerLoopRoutine()
+      worker.isReady (err, isReady) ->
+        if not isReady
+          worker.once 'ready', () ->
+            workerLoopRoutine()
+        else
+          worker.startNewTask task, (err) ->
+            if err?
+              delay (conf.get('taskManager:repeatDelay')), () ->
+                workerLoopRoutine()
 
     worker.once 'task.completed', (err, taskComleted) ->
       cb(err, taskComleted)

@@ -1,6 +1,7 @@
 app:
   appName: "websocketServerCommunication"
   port: 8080
+  websocketPort: 8090
 logs:
   file:
     logsDir: "./logs"
@@ -8,14 +9,14 @@ logs:
     handleExceptions: true
     logstash: false
     timestamp: true
-    showLevel: "debug"
+    showLevel: "info"
     json: true
     maxFiles: 10
   console:
     handleExceptions: true
     timestamp: true
     colorize: true
-    showLevel: "debug"
+    showLevel: "info"
 redis:
   serverHost: "1uakkf2d9303a.andrwel.koding.io"
   serverPort: 6379
