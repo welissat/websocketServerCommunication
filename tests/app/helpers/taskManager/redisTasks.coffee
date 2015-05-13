@@ -8,16 +8,24 @@ _ = require 'underscore'
 
 
 faker = require 'faker'
+redis = require 'redis'
+conf = req 'app/helpers/config.coffee'
 Task = req('app/helpers/taskManager/task.coffee')
 Tasks = req('app/helpers/taskManager/redisTasks.coffee')
-
+redisServerHost = conf.get('redis:serverHost')
+redisServerPort = conf.get('redis:serverPort')
 global.Log = req 'app/helpers/logger.coffee'
+Log.info "prepare for connection to redis://#{redisServerHost}:#{redisServerPort}"
+redisClient = redis.createClient(redisServerPort, redisServerHost);
+
+
+
 
 expect = require('chai').expect
 
 describe 'new tasks', () ->
   it 'should be init', (done) ->
-    tasks = new Tasks()
+    tasks = new Tasks(redisClient)
     expect(tasks).to.be.an.instanceof(Tasks)
     done()
 

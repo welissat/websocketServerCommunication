@@ -7,5 +7,10 @@ Uuid = require 'uuid-lib'
 Tasks = req('app/helpers/taskManager/tasks.coffee')
 
 class RedisTasks extends  Tasks
+  constructor: (redisClient) ->
+    @redisClient = redisClient
+    super()
+
+
 
 module.exports = RedisTasks
