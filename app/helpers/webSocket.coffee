@@ -3,29 +3,27 @@
 conf = req 'app/helpers/config.coffee'
 log = req 'app/helpers/logger.coffee'
 {EventEmitter} = require 'events'
+ws = require 'nodejs-websocket'
 
-ws = require "nodejs-websocket"
-webSocketServer = ws.createServer (websocketConnection) ->
+class WebSocketServer
+  constructor: (port) ->
+    @websocketEventEmmiter = new EventEmitter()
+    @port = port
+    @startup()
 
-  path = websocketConnection.path
-  readyState = websocketConnection.readyState
+  startup: () ->
+    _this = @
+    webSocketServer = ws.createServer (websocketConnection) ->
+      _this.websocketEventEmmiter.emit 'client.connected', null, websocketConnection
+    webSocketServer.listen @port
 
-  websocketConnection.on 'text', (rawQuery) ->
-    try
-      query = JSON.parse(rawQuery)
-    catch e
-      log.error e
-      return
-    #console.log query
-    if query.status?
-      status = query.status
-      log.info "worker #{path} status: #{status}"
+  getIdByWebsocketConnection: (websocketConnection) ->
+    return websocketConnection.path
 
+  on: (emitName, fn) ->
+    @websocketEventEmmiter.on emitName, fn
 
-  getStatusQuery = {opCode: "get.status"}
-  websocketConnection.sendText JSON.stringify(getStatusQuery)
+  once: (emitName, fn) ->
+    @websocketEventEmmiter.once emitName, fn
 
-
-
-webSocketServer.listen conf.get("app:websocketPort")
-module.exports = webSocketServer
+module.exports = WebSocketServer

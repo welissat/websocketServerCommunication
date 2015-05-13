@@ -63,6 +63,7 @@ class Worker
       @workerEmitter.emit @status
       @workerEmitter.emit 'task.completed', null, task
       cb null
+
   setWorkerStatus: (status, cb) ->
     @status = status
     cb null

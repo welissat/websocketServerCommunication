@@ -36,7 +36,6 @@ describe 'workers', () ->
           done()
 
 
-
     for i in [1..maxWorkers]
       worker = new Worker()
       do (worker) ->
