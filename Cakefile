@@ -11,6 +11,7 @@ task "test", "run tests", ->
     --require coffee-script
     --require tests/test_helper.coffee
     --colors
+    --recursive
     ./tests/app/helpers/
     ", (err, output) ->
       throw err if err

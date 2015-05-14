@@ -32,6 +32,8 @@ class Tasks
   getNewTask: (cb) ->
     currentTask = _.first(@taskList)
     if currentTask?
+      currentTask.once 'completed', () =>
+        @moveTaskToCompletedQueue(currentTask)
       currentTask.setStatus "locked" #задача занята, но ещё не отправлена воркеру
     cb null, currentTask
 
@@ -46,8 +48,7 @@ class Tasks
 
     @taskList.push task
 
-    task.once 'completed', () =>
-      @moveTaskToCompletedQueue(task)
+
 
   moveTaskToCompletedQueue: (task) ->
     Log.info "moveTaskToCompletedQueue #{task.getTaskId().value}"
