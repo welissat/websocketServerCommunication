@@ -8,9 +8,10 @@ Tasks = req('app/helpers/taskManager/tasks.coffee')
 Task = req('app/helpers/taskManager/task.coffee')
 
 class RedisTasks extends  Tasks
-  constructor: (redisClient, queueId) ->
+  constructor: (redisClient, queueId, completedQueueId) ->
     @redisClient = redisClient
     @queueId = queueId
+    @completedQueueId = "completed.#{queueId}"
     @status = "ready"
     super()
 
@@ -59,10 +60,12 @@ class RedisTasks extends  Tasks
             cb err, currentTask
 
   moveTaskToCompletedQueue: (task) ->
-    @redisClient.lrem @queueId, -1, task.getPayload(), () =>
+    @redisClient.multi()
+    .rpush(@completedQueueId, task.getPayload())
+    .lrem(@queueId, -1, task.getPayload())
+    .exec (err, answers) =>
       @status = 'ready'
       @tasksEmitter.emit 'ready'
-
 
 
 module.exports = RedisTasks
