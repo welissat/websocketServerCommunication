@@ -9,16 +9,10 @@ helmet = require 'helmet'
 
 conf = req 'app/helpers/config.coffee'
 log = req 'app/helpers/logger.coffee'
-#redisClient = req 'app/helpers/redis.coffee'
-#ws = require "nodejs-websocket"
-
-app = express()
-app.use(helmet)
+WebsocketWorkers = req 'app/helpers/taskManager/websocketWorkers.coffee'
+WebSocketServer = req 'app/helpers/webSocket.coffee'
 
 port = conf.get('app:port');
-app.listen port, (err) ->
-  if err?
-    log.error "cant listen #{port}"
-  else
-    log.info "app listening #{port}"
 
+webSocketServer = new WebSocketServer(port)
+websocketWorkers = new WebsocketWorkers(webSocketServer)

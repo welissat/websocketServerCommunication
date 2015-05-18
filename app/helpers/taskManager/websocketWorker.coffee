@@ -33,10 +33,26 @@ class WebsocketWorker extends Worker
         Log.error error
         _this.workerEmitter.emit 'error', error
 
+    @websocketConnection.on 'error', (err) =>
+      @safeShutdown()
+
+
+  safeShutdown: () ->
+    @websocketConnection.close()
+    @workerEmitter.emit 'safe.shutdown'
+    @workerEmitter.removeAllListeners()
+    @workerId = undefined;
+
 
   setWorkerId: () ->
-    workerId = @websocketConnection.path.split('/id/').join('')
+    workerId = WebsocketWorker.getWorkerIdByPath @websocketConnection
     @workerId = workerId
+
+  @getWorkerIdByPath : (websocketConnection) ->
+    workerId = websocketConnection.path.split('/id/').join('')
+    return workerId
+
+
 
   isReady: (cb) ->
     @sendCommandToWSClient 'get.status', {}, (err, status) ->

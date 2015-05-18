@@ -13,9 +13,19 @@ class RedisTasks extends  Tasks
     @queueId = queueId
     @completedQueueId = "completed.#{queueId}"
     @status = "ready"
+    @shutdown = false
+    @setup()
     super()
 
+  setup: () ->
+    @redisClient.on "error", (err) =>
+      log.error err
+      @safeShutdown()
+  
   readyNewTask: (cb) ->
+    if @shutdown
+      return
+
     @redisClient.lrange @queueId, -1, 1, (err, payloads) ->
       if err?
         cb err
@@ -29,15 +39,23 @@ class RedisTasks extends  Tasks
           cb false
 
   getTaskId: () ->
+    if @shutdown
+      return
     return @queueId
 
   addNewTask: (task, cb) ->
+    if @shutdown
+      return
+
     #TODO need new task event(pub/sub)
     @redisClient.rpush @queueId, task.getPayload(), (err) =>
       if cb? then cb
 
   getNewTask: (cb) ->
     _this = @
+    if @shutdown
+      return
+
     if @status isnt "ready"
       @once 'ready', () ->
         setImmediate () ->
@@ -60,6 +78,9 @@ class RedisTasks extends  Tasks
             cb err, currentTask
 
   moveTaskToCompletedQueue: (task) ->
+    if @shutdown
+      return
+
     @redisClient.multi()
     .rpush(@completedQueueId, task.getPayload())
     .lrem(@queueId, -1, task.getPayload())
@@ -67,5 +88,11 @@ class RedisTasks extends  Tasks
       @status = 'ready'
       @tasksEmitter.emit 'ready'
 
+
+  safeShutdown: () ->
+    @shutdown = true
+    @redisClient.close()
+    @tasksEmitter.emit 'safe.shutdown'
+    @tasksEmitter.removeAllListeners()
 
 module.exports = RedisTasks
