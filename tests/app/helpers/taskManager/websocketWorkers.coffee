@@ -9,7 +9,8 @@ WebSocketServer = req 'app/helpers/webSocket.coffee'
 webSocketClient = require 'nodejs-websocket'
 Uuid = require 'uuid-lib'
 
-webSocketServer = new WebSocketServer(8090)
+webSocketPort = 9091
+webSocketServer = new WebSocketServer(webSocketPort)
 
 wsClientEmulator = (wsclient) ->
   status = 'ready'
@@ -70,5 +71,5 @@ describe 'workers', () ->
     for i in [1..maxWorkers]
       workerId = Uuid.create().toString()
       do (workerId) ->
-        clientPath = "ws://127.0.0.1:8090/id/#{workerId}"
+        clientPath = "ws://127.0.0.1:#{webSocketPort}/id/#{workerId}"
         webSocketClient.connect clientPath, () ->

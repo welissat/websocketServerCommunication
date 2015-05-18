@@ -12,7 +12,7 @@ log = req 'app/helpers/logger.coffee'
 WebsocketWorkers = req 'app/helpers/taskManager/websocketWorkers.coffee'
 WebSocketServer = req 'app/helpers/webSocket.coffee'
 
-port = conf.get('app:websocketPort');
+port = conf.get('app:port');
 
 webSocketServer = new WebSocketServer(port)
 websocketWorkers = new WebsocketWorkers(webSocketServer)
