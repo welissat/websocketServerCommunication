@@ -58,7 +58,6 @@ describe 'workers', () ->
         if checkAddedWorker.checkedWorkers.length >= maxWorkers
           done()
 
-
     webSocketServer.on 'client.connected', (err, wsClient) ->
       worker = new Worker(wsClient)
       workersIdList.push worker.getWorkerId()
@@ -73,8 +72,3 @@ describe 'workers', () ->
       do (workerId) ->
         clientPath = "ws://127.0.0.1:8090/id/#{workerId}"
         webSocketClient.connect clientPath, () ->
-
-
-
-
-#console.log workersIdList

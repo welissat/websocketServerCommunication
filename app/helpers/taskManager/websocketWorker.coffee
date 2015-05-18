@@ -8,7 +8,7 @@ Worker = req 'app/helpers/taskManager/worker'
 class WebsocketWorker extends Worker
   constructor: (websocketConnection) ->
     @websocketConnection = websocketConnection
-
+    @isShutdown = false
     super()
     @setupListeners()
 
@@ -38,6 +38,7 @@ class WebsocketWorker extends Worker
 
 
   safeShutdown: () ->
+    @isShutdown = true
     @websocketConnection.close()
     @workerEmitter.emit 'safe.shutdown'
     @workerEmitter.removeAllListeners()
@@ -45,6 +46,8 @@ class WebsocketWorker extends Worker
 
 
   setWorkerId: () ->
+    if @isShutdown
+      return
     workerId = WebsocketWorker.getWorkerIdByPath @websocketConnection
     @workerId = workerId
 
@@ -55,6 +58,10 @@ class WebsocketWorker extends Worker
 
 
   isReady: (cb) ->
+    if @isShutdown
+      cb null, false
+      return
+
     @sendCommandToWSClient 'get.status', {}, (err, status) ->
       if err?
         cb err
@@ -77,6 +84,9 @@ class WebsocketWorker extends Worker
 
 
   sendCommandToWSClient: (command, payload, cb) ->
+    if @isShutdown
+      return
+
     getStatusQuery = {opCode: command, payload: payload}
     getStatusQueryString = JSON.stringify(getStatusQuery)
     #console.log getStatusQueryString
